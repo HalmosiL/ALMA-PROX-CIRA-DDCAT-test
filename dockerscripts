@@ -1,0 +1,6 @@
+nvidia-docker run -it --gpus all \
+--mount type=bind,source=/srv/data/halmosi/ALMAPROX-CITY-SCAPES/alma_prox_segmentation/,target=/alma_prox_segmentation/ \
+--mount type=bind,source=/srv/data/halmosi/city-scapes-dataset/,target=/alma_prox_segmentation/data/cityscapes/ \
+18daf952c312
+
+python attack_experiment.py -F ./test with dataset.cityscapes cudnn_flag=benchmark attack.alma_prox_linf target=0
