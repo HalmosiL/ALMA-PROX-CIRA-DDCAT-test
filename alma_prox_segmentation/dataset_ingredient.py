@@ -43,7 +43,6 @@ def get_cityscapes(root: str, size: int, split: str,
 
 
 _loaders = {
-    'pascal_voc_2012': get_pascal_voc_2012,
     'cityscapes': get_cityscapes
 }
 
