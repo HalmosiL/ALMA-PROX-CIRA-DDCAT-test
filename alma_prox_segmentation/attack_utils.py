@@ -38,6 +38,8 @@ def run_attack(model: nn.Module,
     if return_adv:
         images, adv_images = [], []
 
+#####################################################################################################################
+
     for i, (image, label) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
         if return_adv:
             images.append(image.clone())
@@ -62,6 +64,8 @@ def run_attack(model: nn.Module,
         pred = logits.argmax(dim=1)
         accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
         confmat_orig.update(label, pred)
+
+######################################################################################################################
 
         if targeted:
             target_mask = attack_label < logits.size(1)
@@ -101,6 +105,8 @@ def run_attack(model: nn.Module,
 
     acc_global, accs, ious = confmat_orig.compute()
     adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
+
+######################################################################################################################
 
     data = {
         'image_names': image_list[:len(apsrs)],

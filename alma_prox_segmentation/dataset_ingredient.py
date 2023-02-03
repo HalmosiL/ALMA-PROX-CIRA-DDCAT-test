@@ -22,8 +22,6 @@ def cityscapes():
 @dataset_ingredient.capture
 def get_cityscapes(root: str, size: int, split: str,
                    num_images: Optional[int] = None, batch_size: int = 1) -> Tuple[DataLoader, Optional[Callable]]:
-    print("Size:", size)
-
     transform = transforms.Compose([
         transforms.Resize(size),
         transforms.ToTensor(),
@@ -42,8 +40,37 @@ def get_cityscapes(root: str, size: int, split: str,
     return loader, label_map_cityscapes
 
 
+@dataset_ingredient.capture
+def get_cityscapes_resized(root, size, split, batch_size=1):
+    value_scale = 255
+    mean = [0.485, 0.456, 0.406]
+    mean = [item * value_scale for item in mean]
+    std = [0.229, 0.224, 0.225]
+    std = [item * value_scale for item in std]
+
+    val_transform = transform.Compose([
+        transform.ToTensor(),
+        transform.Normalize(mean=mean, std=std)]
+    )
+
+    image_list = root + split + ".txt"
+
+    loader = torch.utils.data.DataLoader(   
+        dataset=SemDataSplit(
+            split=split,
+            data_root=root,
+            data_list=image_list,
+            transform=val_transform
+        ),
+        batch_size=1,
+        num_workers=1,
+        pin_memory=True
+    )
+
+    return loader, label_map_cityscapes
+
 _loaders = {
-    'cityscapes': get_cityscapes
+    'cityscapes': get_cityscapes_resized
 }
 
 
