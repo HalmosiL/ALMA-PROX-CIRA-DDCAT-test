@@ -61,56 +61,55 @@ def run_attack(
             _, logits = model(image)
             logits = logits[0]
 
-            if False:
-                if i == 0:
-                    num_classes = logits.size(1)
-                    confmat_orig = ConfusionMatrix(num_classes=num_classes)
-                    confmat_adv = ConfusionMatrix(num_classes=num_classes)
+            label = torch.zeros(19, 449, 449).to(device)
 
-                mask = label < num_classes
-                mask_sum = mask.flatten(1).sum(dim=1)
-                pred = logits.argmax(dim=1)
-                accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-                confmat_orig.update(label, pred)
+            if i == 0:
+                num_classes = logits.size(1)
+                confmat_orig = ConfusionMatrix(num_classes=num_classes)
+                confmat_adv = ConfusionMatrix(num_classes=num_classes)
+
+            mask = label < num_classes
+            mask_sum = mask.flatten(1).sum(dim=1)
+            pred = logits.argmax(dim=1)
+            accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+            confmat_orig.update(label, pred)
 
 
-######################################################################################################################
+            if targeted:
+                target_mask = attack_label < logits.size(1)
+                target_sum = target_mask.flatten(1).sum(dim=1)
+                apsrs_orig.extend(((pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
+            else:
+                apsrs_orig.extend(((pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
-        if targeted:
-            target_mask = attack_label < logits.size(1)
-            target_sum = target_mask.flatten(1).sum(dim=1)
-            apsrs_orig.extend(((pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
-        else:
-            apsrs_orig.extend(((pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+            forward_counter.reset(), backward_counter.reset()
+            start.record()
+            adv_image = attack(model=model, inputs=image, labels=attack_label, targeted=targeted)
+            # performance monitoring
+            end.record()
+            torch.cuda.synchronize()
+            times.append((start.elapsed_time(end)) / 1000)  # times for cuda Events are in milliseconds
+            forwards.append(forward_counter.num_samples_called)
+            backwards.append(backward_counter.num_samples_called)
+            forward_counter.reset(), backward_counter.reset()
 
-        forward_counter.reset(), backward_counter.reset()
-        start.record()
-        adv_image = attack(model=model, inputs=image, labels=attack_label, targeted=targeted)
-        # performance monitoring
-        end.record()
-        torch.cuda.synchronize()
-        times.append((start.elapsed_time(end)) / 1000)  # times for cuda Events are in milliseconds
-        forwards.append(forward_counter.num_samples_called)
-        backwards.append(backward_counter.num_samples_called)
-        forward_counter.reset(), backward_counter.reset()
+            if adv_image.min() < 0 or adv_image.max() > 1:
+                warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
+                adv_image.clamp_(min=0, max=1)
 
-        if adv_image.min() < 0 or adv_image.max() > 1:
-            warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
-            adv_image.clamp_(min=0, max=1)
+            if return_adv:
+                adv_images.append(adv_image.cpu().clone())
 
-        if return_adv:
-            adv_images.append(adv_image.cpu().clone())
+            adv_logits = model(adv_image)
+            adv_pred = adv_logits.argmax(dim=1)
+            confmat_adv.update(label, adv_pred)
+            if targeted:
+                apsrs.extend(((adv_pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
+            else:
+                apsrs.extend(((adv_pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
-        adv_logits = model(adv_image)
-        adv_pred = adv_logits.argmax(dim=1)
-        confmat_adv.update(label, adv_pred)
-        if targeted:
-            apsrs.extend(((adv_pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
-        else:
-            apsrs.extend(((adv_pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-
-        for metric, metric_func in metrics.items():
-            distances[metric].extend(metric_func(adv_image, image).detach().cpu().tolist())
+            for metric, metric_func in metrics.items():
+                distances[metric].extend(metric_func(adv_image, image).detach().cpu().tolist())
 
     acc_global, accs, ious = confmat_orig.compute()
     adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
