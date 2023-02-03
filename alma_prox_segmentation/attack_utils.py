@@ -12,16 +12,18 @@ from tqdm import tqdm
 from utils import ConfusionMatrix
 
 
-def run_attack(model: nn.Module,
-               loader: DataLoader,
-               attack: Callable,
-               target: Optional[Union[int, Tensor]] = None,
-               metrics: Dict[str, Callable] = _default_metrics,
-               return_adv: bool = False) -> dict:
+def run_attack(
+                model,
+                loader,
+                attack,
+                image_list,
+                target=None,
+                metrics=_default_metrics,
+                return_adv=False
+            ):
     device = next(model.parameters()).device
     targeted = True if target is not None else False
     loader_length = len(loader)
-    image_list = getattr(loader.sampler.data_source, 'dataset', loader.sampler.data_source).images
 
     start, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
     forward_counter, backward_counter = ForwardCounter(), BackwardCounter()

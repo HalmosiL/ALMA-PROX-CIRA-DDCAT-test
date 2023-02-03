@@ -45,7 +45,7 @@ def main(cpu: bool,
     device = torch.device('cuda' if torch.cuda.is_available() and not cpu else 'cpu')
     setattr(torch.backends.cudnn, cudnn_flag, True)
 
-    loader, label_func = get_dataset()
+    loader, label_func, image_list = get_dataset()
 
     #Function to get model load to the memorry
     model = get_model(
@@ -65,8 +65,15 @@ def main(cpu: bool,
         img_target = Image.open(target).resize(size=target_size[::-1], resample=Image.NEAREST)
         target = pil_to_tensor(label_func(img_target)).long().to(device)
 
-    attack_data = run_attack(model=model, loader=loader, attack=attack, target=target, metrics=metrics,
-                             return_adv=save_adv and save_dir is not None)
+    attack_data = run_attack(
+        model=model,
+        loader=loader,
+        attack=attack,
+        target=target,
+        metrics=metrics,
+        image_list=image_list,
+        return_adv=save_adv and save_dir is not None
+    )
 
     if save_adv and save_dir is not None:
         dataset_name = _config['dataset']['name']

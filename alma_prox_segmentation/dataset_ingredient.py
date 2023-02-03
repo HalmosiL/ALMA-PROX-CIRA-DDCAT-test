@@ -10,6 +10,7 @@ from utils import label_map_cityscapes
 from dataset import SemDataSplit
 
 import transforms as transform
+import numpy as np
 import torch
 
 dataset_ingredient = Ingredient('dataset')
@@ -57,13 +58,13 @@ def get_cityscapes_resized(root, size, split, batch_size=1):
         transform.Normalize(mean=mean, std=std)]
     )
 
-    image_list = root + "/" + split + ".txt"
+    image_list_path = root + "/" + split + ".txt"
 
     loader = torch.utils.data.DataLoader(   
         dataset=SemDataSplit(
             split=split,
             data_root=root,
-            data_list=image_list,
+            data_list=image_list_path,
             transform=val_transform
         ),
         batch_size=1,
@@ -71,7 +72,10 @@ def get_cityscapes_resized(root, size, split, batch_size=1):
         pin_memory=True
     )
 
-    return loader, label_map_cityscapes
+    with open(image_list_path, 'r') as f:       
+        image_list = np.array([line.split()[0] for line in f]).flatten()
+
+    return loader, label_map_cityscapes, image_list
 
 _loaders = {
     'cityscapes': get_cityscapes_resized
