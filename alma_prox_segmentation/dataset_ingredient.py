@@ -8,7 +8,7 @@ from torchvision.transforms import InterpolationMode
 
 from utils import label_map_cityscapes
 from dataset import SemDataSplit
-from transforms import Compose, ToTensor, Normalize
+import transforms as transform
 
 dataset_ingredient = Ingredient('dataset')
 
