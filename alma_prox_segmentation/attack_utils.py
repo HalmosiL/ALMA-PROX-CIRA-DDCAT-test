@@ -61,8 +61,7 @@ def run_attack(
             _, logits = model(image)
             logits = logits[0]
 
-            print(label)
-
+'''
             if i == 0:
                 num_classes = logits.size(1)
                 confmat_orig = ConfusionMatrix(num_classes=num_classes)
@@ -73,6 +72,7 @@ def run_attack(
             pred = logits.argmax(dim=1)
             accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
             confmat_orig.update(label, pred)
+'''
 
 ######################################################################################################################
 
