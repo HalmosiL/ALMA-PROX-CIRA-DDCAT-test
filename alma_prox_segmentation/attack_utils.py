@@ -58,7 +58,7 @@ def run_attack(
             else:
                 attack_label = label
 
-            _, logits = model(image)
+            _, _, _, logits = model(image)
 
             if i == 0:
                 num_classes = logits.size(1)
