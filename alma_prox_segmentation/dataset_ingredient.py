@@ -7,6 +7,8 @@ from torchvision.datasets import Cityscapes, VOCSegmentation
 from torchvision.transforms import InterpolationMode
 
 from utils import label_map_cityscapes
+from dataset import SemDataSplit
+from transforms import Compose, ToTensor, Normalize
 
 dataset_ingredient = Ingredient('dataset')
 
