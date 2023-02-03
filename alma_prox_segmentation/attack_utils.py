@@ -83,7 +83,10 @@ def run_attack(
 
             forward_counter.reset(), backward_counter.reset()
             start.record()
+
+            print("Start attack...")
             adv_image = attack(model=model, inputs=image, labels=attack_label, targeted=targeted)
+            print("End attack...")
             # performance monitoring
             end.record()
             torch.cuda.synchronize()
