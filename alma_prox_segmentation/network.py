@@ -401,7 +401,7 @@ class PSPNet(nn.Module):
             if y is not None:
                 main_loss = self.criterion(x, y)
                 return x.max(1)[1], x, main_loss
-            return x.max(1)[1], x
+            return x
     
     def forward_inner(self, x):
         x_size = x.size()
