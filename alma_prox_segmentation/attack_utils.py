@@ -58,7 +58,8 @@ def run_attack(
             else:
                 attack_label = label
 
-            logits = model(image)
+            logits, _ = model(image)
+
             if i == 0:
                 num_classes = logits.size(1)
                 confmat_orig = ConfusionMatrix(num_classes=num_classes)
