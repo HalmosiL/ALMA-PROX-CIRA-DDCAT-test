@@ -15,7 +15,7 @@ def alma(model: nn.Module,
          targeted: bool = False,
          adv_threshold: float = 0.99,
          penalty: Callable = all_penalties['P2'],
-         num_steps: int = 1000,
+         num_steps: int = 5,
          lr_init: float = 0.1,
          lr_reduction: float = 0.01,
          distance: str = 'l2',
@@ -68,7 +68,11 @@ def alma(model: nn.Module,
     for i in range(num_steps):
 
         adv_inputs = inputs + δ
+
+
         logits = model(adv_inputs)
+
+
         dist = dist_func(adv_inputs)
 
         if i == 0:
