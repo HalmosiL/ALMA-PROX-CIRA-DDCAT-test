@@ -41,32 +41,34 @@ def run_attack(
         images, adv_images = [], []
 
 #####################################################################################################################
-    for i, (image, label) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
-        print(image, label)
+    for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
+        for i in range(len(images)):
+            image = images[i]
+            label = labels[i]
 
-        if return_adv:
-            images.append(image.clone())
+            if return_adv:
+                images.append(image.clone())
 
-        image, label = image.to(device), label.to(device).squeeze(1).long()
-        if targeted:
-            if isinstance(target, Tensor):
-                attack_label = target.to(device).expand(image.shape[0], -1, -1)
-            elif isinstance(target, int):
-                attack_label = torch.full_like(label, fill_value=target)
-        else:
-            attack_label = label
+            image, label = image.to(device), label.to(device).squeeze(1).long()
+            if targeted:
+                if isinstance(target, Tensor):
+                    attack_label = target.to(device).expand(image.shape[0], -1, -1)
+                elif isinstance(target, int):
+                    attack_label = torch.full_like(label, fill_value=target)
+            else:
+                attack_label = label
 
-        logits = model(image)
-        if i == 0:
-            num_classes = logits.size(1)
-            confmat_orig = ConfusionMatrix(num_classes=num_classes)
-            confmat_adv = ConfusionMatrix(num_classes=num_classes)
+            logits = model(image)
+            if i == 0:
+                num_classes = logits.size(1)
+                confmat_orig = ConfusionMatrix(num_classes=num_classes)
+                confmat_adv = ConfusionMatrix(num_classes=num_classes)
 
-        mask = label < num_classes
-        mask_sum = mask.flatten(1).sum(dim=1)
-        pred = logits.argmax(dim=1)
-        accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-        confmat_orig.update(label, pred)
+            mask = label < num_classes
+            mask_sum = mask.flatten(1).sum(dim=1)
+            pred = logits.argmax(dim=1)
+            accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+            confmat_orig.update(label, pred)
 
 ######################################################################################################################
 
