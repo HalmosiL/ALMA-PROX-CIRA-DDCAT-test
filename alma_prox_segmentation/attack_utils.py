@@ -91,7 +91,7 @@ def run_attack(
             forward_counter.reset(), backward_counter.reset()
 
             if adv_image.min() < 0 or adv_image.max() > 1:
-                warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
+                #warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
                 adv_image.clamp_(min=0, max=1)
 
             if return_adv:
