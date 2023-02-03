@@ -93,4 +93,4 @@ class SemDataSplit(Dataset):
             for y in range(4):
                 labels.append(label[x*449:(x+1)*449, y*449:(y+1)*449])
 
-        return images, labels, label
+        return images, labels
