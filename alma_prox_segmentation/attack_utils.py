@@ -59,6 +59,7 @@ def run_attack(
                 attack_label = label
 
             _, logits = model(image)
+            logits = logits[0]
 
             print(len(logits))
 
