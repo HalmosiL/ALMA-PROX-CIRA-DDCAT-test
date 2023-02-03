@@ -57,7 +57,7 @@ def get_cityscapes_resized(root, size, split, batch_size=1):
         transform.Normalize(mean=mean, std=std)]
     )
 
-    image_list = root + split + ".txt"
+    image_list = root + "/" + split + ".txt"
 
     loader = torch.utils.data.DataLoader(   
         dataset=SemDataSplit(
