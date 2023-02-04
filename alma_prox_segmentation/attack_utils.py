@@ -41,7 +41,10 @@ def run_attack(
         images, adv_images = [], []
 
 #####################################################################################################################
-    for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=1)):
+    for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
+        if(i == 1):
+            break
+
         for k in range(1):
             print(images[k])
 
