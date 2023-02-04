@@ -113,8 +113,8 @@ def run_attack(
         acc_global, accs, ious = confmat_orig.compute()
         adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
 
-        print(acc_global, accs, ious)
-        print(adv_acc_global, adv_accs, adv_ious)
+        print(acc_global)
+        print(adv_acc_global)
 
 ######################################################################################################################
 
