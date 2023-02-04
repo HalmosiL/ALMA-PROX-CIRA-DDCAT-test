@@ -63,7 +63,6 @@ def run_attack(
             else:
                 attack_label = label
 
-            print(model(image).shape)
             logits_arr.append(model(image))
 
         logits = torch.zeros(19, 898, 1796)
@@ -72,6 +71,7 @@ def run_attack(
 
         for x in range(2):
             for y in range(4):
+                print(logits[:, x*449:(x+1)*449, y*449:(y+1)*449].shape)
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 d += 1
 
