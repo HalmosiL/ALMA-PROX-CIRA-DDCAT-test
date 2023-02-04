@@ -71,7 +71,7 @@ def run_attack(
 
         for x in range(2):
             for y in range(4):
-                print(logits[:, x*449:(x+1)*449, y*449:(y+1)*449].shape)
+                print(logits_arr[d][0].shape)
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 d += 1
 
