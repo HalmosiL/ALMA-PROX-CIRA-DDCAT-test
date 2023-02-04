@@ -50,7 +50,7 @@ def main(cpu: bool,
     #Function to get model load to the memorry
     model = get_model(
         device=device,
-        path="../models/Adversarial_Combination_499.pt"
+        path="../models/Continum_Adversarial_Combination_1000.pt"
     )
 
     attack, attack_name = get_attack()
