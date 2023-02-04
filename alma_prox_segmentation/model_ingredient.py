@@ -5,7 +5,7 @@ def requires_grad_(model, requires_grad):
         param.requires_grad_(requires_grad)
 
 def get_model(device, path):
-    model = get_model(device=device)
+    model = get_new_model(device=device)
     model.eval()
     model.to(device)
     requires_grad_(model, False)
