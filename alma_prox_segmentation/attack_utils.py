@@ -43,8 +43,6 @@ def run_attack(
 #####################################################################################################################
     for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
         for k in range(1):
-            print(i)
-
             image = images[k]
             label = labels[k]
 
@@ -85,7 +83,7 @@ def run_attack(
             start.record()
 
             adv_image = attack(model=model, inputs=image, labels=attack_label, targeted=targeted)
-            
+
             # performance monitoring
             end.record()
             torch.cuda.synchronize()
