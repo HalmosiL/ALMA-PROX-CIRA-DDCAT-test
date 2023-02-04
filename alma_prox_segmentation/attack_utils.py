@@ -42,7 +42,7 @@ def run_attack(
 
 #####################################################################################################################
     for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
-        for k in range(len(images)):
+        for k in range(1):
             print(i)
 
             image = images[k]
