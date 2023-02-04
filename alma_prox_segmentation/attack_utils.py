@@ -66,14 +66,16 @@ def run_attack(
             print(model(image).shape)
             logits_arr.append(model(image))
 
-        logits = torch.zeros(898, 1796)
+        logits = torch.zeros(19, 898, 1796)
 
         d = 0
 
         for x in range(2):
             for y in range(4):
-                logits[x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d]
+                logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][]
                 d += 1
+
+        logits = logits.reshape(1, 19, 898, 1796)
 
         if i == 0:
             num_classes = logits.size(1)
