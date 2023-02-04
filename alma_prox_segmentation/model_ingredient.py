@@ -1,4 +1,4 @@
-from model import load_model, get_model
+from model import load_model, get_new_model
 
 def requires_grad_(model, requires_grad):
     for param in model.parameters():

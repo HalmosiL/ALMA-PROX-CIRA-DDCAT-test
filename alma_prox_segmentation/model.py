@@ -3,7 +3,7 @@ from network import PSPNet, Dummy
 import torch
 import torch.nn as nn
 
-def get_model(device):
+def get_new_model(device):
     model = PSPNet(
         layers=50,
         bins=(1, 2, 3, 6),
