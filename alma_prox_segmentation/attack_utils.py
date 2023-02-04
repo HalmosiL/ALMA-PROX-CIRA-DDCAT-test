@@ -43,6 +43,8 @@ def run_attack(
 #####################################################################################################################
     for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=1)):
         for k in range(1):
+            print(images[k])
+
             image = images[k]
             label = labels[k]
 
@@ -110,11 +112,11 @@ def run_attack(
             for metric, metric_func in metrics.items():
                 distances[metric].extend(metric_func(adv_image, image).detach().cpu().tolist())
 
-        acc_global, accs, ious = confmat_orig.compute()
-        adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
+    acc_global, accs, ious = confmat_orig.compute()
+    adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
 
-        print(acc_global)
-        print(adv_acc_global)
+    print(acc_global)
+    print(adv_acc_global)
 
 ######################################################################################################################
 
