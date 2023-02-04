@@ -47,7 +47,7 @@ def run_attack(
 
         logits_arr = []
 
-        for k in range(len(images[k])):
+        for k in range(len(images)):
             image = images[k]
             label = labels[k]
 
