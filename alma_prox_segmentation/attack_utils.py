@@ -78,6 +78,9 @@ def run_attack(
 
         for x in range(2):
             for y in range(4):
+                print("Attack_label:", attack_label.shape)
+                print("Attack_label:", attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449].shape)
+
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449] = attack_label[d][0]
