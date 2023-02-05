@@ -49,6 +49,8 @@ def run_attack(
         labels_arr = []
         attack_label_arr = []
 
+##############################################-NORMAL-TEST-BLOCK###################################################
+
         for k in range(len(images)):
             image = images[k]
             label = labels[k]
@@ -57,6 +59,7 @@ def run_attack(
                 images.append(image.clone())
 
             image, label = image.to(device), label.to(device).squeeze(1).long()
+
             if targeted:
                 if isinstance(target, Tensor):
                     attack_label_arr.append(target.to(device).expand(image.shape[0], -1, -1))
@@ -109,9 +112,17 @@ def run_attack(
             apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         forward_counter.reset(), backward_counter.reset()
+
+#####################################################################################################################
+
         start.record()
 
-        adv_image = attack(model=model, inputs=image, labels=attack_label, targeted=targeted)
+        adv_images_arr = []
+
+        for k in range(len(images)):
+            image = images[k]
+            label = labels[k]
+            adv_images_arr.append(attack(model=model, inputs=image, labels=attack_label_arr[k], targeted=targeted))
 
         # performance monitoring
         end.record()
@@ -122,7 +133,7 @@ def run_attack(
         forward_counter.reset(), backward_counter.reset()
 
         if adv_image.min() < 0 or adv_image.max() > 1:
-            #warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
+            warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
             adv_image.clamp_(min=0, max=1)
 
         if return_adv:
