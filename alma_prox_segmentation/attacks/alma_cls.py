@@ -7,6 +7,8 @@ from adv_lib.utils.visdom_logger import VisdomLogger
 from torch import Tensor, nn
 from torch.autograd import grad
 
+mean_origin = [0.485, 0.456, 0.406]
+std_origin = [0.229, 0.224, 0.225]
 
 def alma(model: nn.Module,
          inputs: Tensor,
@@ -66,12 +68,17 @@ def alma(model: nn.Module,
     step_found = torch.full_like(lr, num_steps // 2)
 
     for i in range(num_steps):
+        adv_inputs[:, 0, :, :] = adv_inputs[:, 0, :, :] * std_origin[0] + mean_origin[0]
+        adv_inputs[:, 1, :, :] = adv_inputs[:, 1, :, :] * std_origin[1] + mean_origin[1]
+        adv_inputs[:, 2, :, :] = adv_inputs[:, 2, :, :] * std_origin[2] + mean_origin[2]
 
         adv_inputs = inputs + δ
 
+        adv_inputs[:, 0, :, :] = (adv_inputs[:, 0, :, :] - mean_origin[0]) / std_origin[0]
+        adv_inputs[:, 1, :, :] = (adv_inputs[:, 1, :, :] - mean_origin[1]) / std_origin[1]
+        adv_inputs[:, 2, :, :] = (adv_inputs[:, 2, :, :] - mean_origin[2]) / std_origin[2]
 
         logits = model(adv_inputs)
-
 
         dist = dist_func(adv_inputs)
 
