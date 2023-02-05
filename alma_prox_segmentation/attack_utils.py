@@ -109,7 +109,7 @@ def run_attack(
         forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
 
-        print("ACC:", acc_global[0])
+        print("ACC:", acc_global.item())
 
 #####################################################################################################################
 
@@ -182,7 +182,7 @@ def run_attack(
         acc_global, accs, ious = confmat_orig.compute()
         adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
     
-        print("ACC:", adv_acc_global[0])
+        print("ACC:", adv_acc_global.item())
 
 ######################################################################################################################
 
