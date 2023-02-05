@@ -90,7 +90,7 @@ def run_attack(
                 d += 1
 
         logits = logits.reshape(1, 19, 898, 1796).to(device)
-        
+
         attack_label = attack_label.to(device)
         labels = labels.to(device)
 
@@ -103,9 +103,6 @@ def run_attack(
         mask_sum = mask.flatten(1).sum(dim=1)
         pred = logits.argmax(dim=1)
 
-        print(pred.shape)
-        print(labels.shape)
-
         accuracies.extend(((pred == labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
         confmat_orig.update(labels, pred)
 
@@ -117,6 +114,10 @@ def run_attack(
             apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         forward_counter.reset(), backward_counter.reset()
+
+        acc_global, accs, ious = confmat_orig.compute()
+
+        print(acc_global, accs, ious)
 
 #####################################################################################################################
 
