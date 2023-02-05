@@ -146,7 +146,7 @@ def run_attack(
 
             adv_logits_arr.append(model(adv_images_arr[k]))
 
-        adv_pred = adv_pred.reshape(1, 19, 898, 1796).to(device)
+        adv_pred = adv_pred.zeros(1, 19, 898, 1796).to(device)
 
         d = 0
 
