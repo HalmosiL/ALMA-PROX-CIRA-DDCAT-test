@@ -144,10 +144,16 @@ def run_attack(
             if return_adv:
                 adv_images.append(adv_images_arr[k].cpu().clone())
 
+            images[k][:, 0, :, :] = images[k][:, 0, :, :] * std_origin[0] + mean_origin[0]
+            images[k][:, 1, :, :] = images[k][:, 1, :, :] * std_origin[1] + mean_origin[1]
+            images[k][:, 2, :, :] = images[k][:, 2, :, :] * std_origin[2] + mean_origin[2]
+
             adv_images_arr[k][:, 0, :, :] = adv_images_arr[k][:, 0, :, :] * std_origin[0] + mean_origin[0]
             adv_images_arr[k][:, 1, :, :] = adv_images_arr[k][:, 1, :, :] * std_origin[1] + mean_origin[1]
             adv_images_arr[k][:, 2, :, :] = adv_images_arr[k][:, 2, :, :] * std_origin[2] + mean_origin[2]
 
+            adv_images_arr[k] = torch.max(adv_images_arr[k], adv_images_arr[k] - 0.01)
+            adv_images_arr[k] = torch.min(adv_images_arr[k], adv_images_arr[k] + 0.01)
             adv_images_arr[k] = torch.clamp(adv_images_arr[k], min=0.0, max=1.0)
 
             adv_images_arr[k][:, 0, :, :] = (adv_images_arr[k][:, 0, :, :] - mean_origin[0]) / std_origin[0]
@@ -171,8 +177,8 @@ def run_attack(
                 d += 1
 
         adv_pred = adv_pred.reshape(1, 19, 898, 1796)
-
         adv_pred = adv_pred.argmax(dim=1)
+
         confmat_adv.update(label, adv_pred)
 
         if targeted:
