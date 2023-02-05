@@ -113,8 +113,11 @@ def run_attack(
         else:
             apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
-        forward_counter.reset(), backward_counter.reset()
 
+        print(pred.shape)
+        print(labels.shape)
+
+        forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
 
         print(acc_global, accs, ious)
