@@ -81,7 +81,7 @@ def run_attack(
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 d += 1
 
-        labels = labels.reshape(1, 1, 898, 1796)
+        labels = labels.reshape(1, 898, 1796)
         logits = logits.reshape(1, 19, 898, 1796)
 
         if i == 0:
