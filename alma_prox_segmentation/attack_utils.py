@@ -71,8 +71,6 @@ def run_attack(
             logits_arr.append(model(image))
             labels_arr.append(label)
 
-            print("Label:", label.shape)
-
         logits = torch.zeros(19, 898, 1796)
         labels = torch.zeros(1, 898, 1796)
         attack_label = torch.zeros(1, 898, 1796)
