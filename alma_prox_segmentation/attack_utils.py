@@ -101,6 +101,9 @@ def run_attack(
         mask_sum = mask.flatten(1).sum(dim=1)
         pred = logits.argmax(dim=1)
 
+        print(pred.shape)
+        print(labels.shape)
+
         accuracies.extend(((pred == labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
         confmat_orig.update(labels, pred)
 
