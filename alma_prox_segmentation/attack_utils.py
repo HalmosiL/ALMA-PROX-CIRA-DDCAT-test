@@ -51,9 +51,6 @@ def run_attack(
 
         for k in range(len(images)):
             image = images[k]
-
-            print(image.shape)
-
             label = labels[k]
 
             if return_adv:
@@ -150,12 +147,17 @@ def run_attack(
             adv_logits_arr.append(model(adv_images_arr[k]))
 
         adv_pred = torch.zeros(19, 898, 1796).to(device)
+        image_full = torch.zeros(3, 898, 1796).to(device)
+        adv_image_full = torch.zeros(3, 898, 1796).to(device)
 
         d = 0
 
         for x in range(2):
             for y in range(4):
                 adv_pred[:, x*449:(x+1)*449, y*449:(y+1)*449] = adv_logits_arr[d][0]
+                image_full[:, x*449:(x+1)*449, y*449:(y+1)*449] = images[k]
+                adv_image_full[:, x*449:(x+1)*449, y*449:(y+1)*449] = adv_images_arr[k]
+
                 d += 1
 
         adv_pred = adv_pred.reshape(1, 19, 898, 1796)
