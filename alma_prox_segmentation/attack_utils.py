@@ -8,9 +8,7 @@ from adv_lib.utils.attack_utils import _default_metrics
 from torch import Tensor, nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-
 from utils import ConfusionMatrix
-
 
 def run_attack(
                 model,
