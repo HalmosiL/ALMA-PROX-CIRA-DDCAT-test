@@ -120,6 +120,8 @@ def run_attack(
         adv_images_arr = []
 
         for k in range(len(images)):
+            print("Finished: ", k, " in ", len(images))
+
             image = images[k]
             label = labels[k]
 
@@ -133,6 +135,8 @@ def run_attack(
         forwards.append(forward_counter.num_samples_called)
         backwards.append(backward_counter.num_samples_called)
         forward_counter.reset(), backward_counter.reset()
+
+
 
         if adv_image.min() < 0 or adv_image.max() > 1:
             warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
