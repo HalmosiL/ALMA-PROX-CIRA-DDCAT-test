@@ -81,9 +81,6 @@ def run_attack(
 
         for x in range(2):
             for y in range(4):
-                print("Attack_label:", attack_label_arr[d][0].shape)
-                print("Attack_label:", attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449].shape)
-
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449] = attack_label_arr[d][0]
@@ -112,10 +109,6 @@ def run_attack(
             apsrs_orig.extend(((pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
         else:
             apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-
-
-        print(pred.shape)
-        print(labels.shape)
 
         forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
