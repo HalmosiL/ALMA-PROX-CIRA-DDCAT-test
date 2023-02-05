@@ -47,6 +47,7 @@ def run_attack(
 
         logits_arr = []
         labels_arr = []
+        attack_label = []
 
         for k in range(len(images)):
             image = images[k]
@@ -58,11 +59,11 @@ def run_attack(
             image, label = image.to(device), label.to(device).squeeze(1).long()
             if targeted:
                 if isinstance(target, Tensor):
-                    attack_label = target.to(device).expand(image.shape[0], -1, -1)
+                    attack_label.append(target.to(device).expand(image.shape[0], -1, -1))
                 elif isinstance(target, int):
-                    attack_label = torch.full_like(label, fill_value=target)
+                    attack_label.append(torch.full_like(label, fill_value=target))
             else:
-                attack_label = label
+                attack_label.append(label)
 
             logits_arr.append(model(image))
             labels_arr.append(label)
@@ -71,17 +72,18 @@ def run_attack(
 
         logits = torch.zeros(19, 898, 1796)
         labels = torch.zeros(1, 898, 1796)
+        attack_label = torch.zeros(1, 898, 1796)
 
         d = 0
 
         for x in range(2):
             for y in range(4):
-                print(logits_arr[d][0].shape)
-                labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
+                labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
+                attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449] = attack_label[d][0]
                 d += 1
 
-        labels = labels.reshape(1, 898, 1796)
+        labels = labels.reshape(1, 1, 898, 1796)
         logits = logits.reshape(1, 19, 898, 1796)
 
         if i == 0:
