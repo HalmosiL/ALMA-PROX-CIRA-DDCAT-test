@@ -81,7 +81,7 @@ def alma_prox_l2():
 def alma_prox_linf():
     name = 'alma_prox'
     norm = float('inf')
-    num_steps = 5
+    num_steps = 100
     lr_reduction = 0.1
     init_lr_distance = 16  # this will be divided by 255
     alpha = 0.8
