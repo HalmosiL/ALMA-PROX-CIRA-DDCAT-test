@@ -146,7 +146,7 @@ def run_attack(
 
             adv_logits_arr.append(model(adv_images_arr[k]))
 
-        adv_pred = torch.zeros(1, 19, 898, 1796).to(device)
+        adv_pred = torch.zeros(19, 898, 1796).to(device)
 
         d = 0
 
@@ -154,6 +154,8 @@ def run_attack(
             for y in range(4):
                 adv_pred[:, x*449:(x+1)*449, y*449:(y+1)*449] = adv_logits_arr[d][0]
                 d += 1
+
+        adv_pred = adv_pred.reshape(1, 19, 898, 1796)
 
         adv_pred = adv_pred.argmax(dim=1)
         confmat_adv.update(label, adv_pred)
