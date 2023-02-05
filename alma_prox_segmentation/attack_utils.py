@@ -72,7 +72,7 @@ def run_attack(
             labels_arr.append(label)
 
         logits = torch.zeros(19, 898, 1796)
-        labels = torch.zeros(1, 898, 1796)
+        label = torch.zeros(1, 898, 1796)
         attack_label = torch.zeros(1, 898, 1796)
 
         d = 0
@@ -80,33 +80,33 @@ def run_attack(
         for x in range(2):
             for y in range(4):
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
-                labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
+                label[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449] = attack_label_arr[d][0]
                 d += 1
 
         logits = logits.reshape(1, 19, 898, 1796).to(device)
 
         attack_label = attack_label.to(device)
-        labels = labels.to(device)
+        label = label.to(device)
 
         if i == 0:
             num_classes = logits.size(1)
             confmat_orig = ConfusionMatrix(num_classes=num_classes)
             confmat_adv = ConfusionMatrix(num_classes=num_classes)
 
-        mask = labels < num_classes
+        mask = label < num_classes
         mask_sum = mask.flatten(1).sum(dim=1)
         pred = logits.argmax(dim=1)
 
-        accuracies.extend(((pred == labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-        confmat_orig.update(labels, pred)
+        accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+        confmat_orig.update(label, pred)
 
         if targeted:
             target_mask = attack_label < logits.size(1)
             target_sum = target_mask.flatten(1).sum(dim=1)
             apsrs_orig.extend(((pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
         else:
-            apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+            apsrs_orig.extend(((pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
@@ -124,7 +124,6 @@ def run_attack(
             label = labels[k]
 
             image, label = image.to(device), label.to(device).squeeze(1).long()
-
             adv_images_arr.append(attack(model=model, inputs=image, labels=attack_label_arr[k], targeted=targeted))
 
         # performance monitoring
