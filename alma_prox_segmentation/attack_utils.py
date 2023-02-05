@@ -40,6 +40,8 @@ def run_attack(
 
 #####################################################################################################################
     for i, (images, labels) in enumerate(tqdm(loader, ncols=80, total=loader_length)):
+        print(images[0].max(), images[0].min())
+
         if(i == 1):
             break
 
