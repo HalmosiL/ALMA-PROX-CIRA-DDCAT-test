@@ -144,16 +144,10 @@ def run_attack(
             if return_adv:
                 adv_images.append(adv_images_arr[k].cpu().clone())
 
-            images[k][:, 0, :, :] = images[k][:, 0, :, :] * std_origin[0] + mean_origin[0]
-            images[k][:, 1, :, :] = images[k][:, 1, :, :] * std_origin[1] + mean_origin[1]
-            images[k][:, 2, :, :] = images[k][:, 2, :, :] * std_origin[2] + mean_origin[2]
-
             adv_images_arr[k][:, 0, :, :] = adv_images_arr[k][:, 0, :, :] * std_origin[0] + mean_origin[0]
             adv_images_arr[k][:, 1, :, :] = adv_images_arr[k][:, 1, :, :] * std_origin[1] + mean_origin[1]
             adv_images_arr[k][:, 2, :, :] = adv_images_arr[k][:, 2, :, :] * std_origin[2] + mean_origin[2]
 
-            adv_images_arr[k] = torch.max(adv_images_arr[k], adv_images_arr[k] - 0.01)
-            adv_images_arr[k] = torch.min(adv_images_arr[k], adv_images_arr[k] + 0.01)
             adv_images_arr[k] = torch.clamp(adv_images_arr[k], min=0.0, max=1.0)
 
             adv_images_arr[k][:, 0, :, :] = (adv_images_arr[k][:, 0, :, :] - mean_origin[0]) / std_origin[0]
@@ -187,6 +181,14 @@ def run_attack(
             apsrs.extend(((adv_pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         for metric, metric_func in metrics.items():
+            image_full[:, 0, :, :] = image_full[:, 0, :, :] * std_origin[0] + mean_origin[0]
+            image_full[:, 1, :, :] = image_full[:, 1, :, :] * std_origin[1] + mean_origin[1]
+            image_full[:, 2, :, :] = image_full[:, 2, :, :] * std_origin[2] + mean_origin[2]
+
+            adv_image_full[:, 0, :, :] = adv_image_full[:, 0, :, :] * std_origin[0] + mean_origin[0]
+            adv_image_full[:, 1, :, :] = adv_image_full[:, 1, :, :] * std_origin[1] + mean_origin[1]
+            adv_image_full[:, 2, :, :] = adv_image_full[:, 2, :, :] * std_origin[2] + mean_origin[2]
+
             distances[metric].extend(metric_func(adv_image_full, image_full).detach().cpu().tolist())
 
         acc_global, accs, ious = confmat_orig.compute()
