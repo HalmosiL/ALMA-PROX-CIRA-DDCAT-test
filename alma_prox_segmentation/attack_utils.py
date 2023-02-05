@@ -73,9 +73,9 @@ def run_attack(
 
             print("Label:", label.shape)
 
-        logits = torch.zeros(19, 898, 1796)
-        labels = torch.zeros(1, 898, 1796)
-        attack_label = torch.zeros(1, 898, 1796)
+        logits = torch.zeros(19, 898, 1796).to(device)
+        labels = torch.zeros(1, 898, 1796).to(device)
+        attack_label = torch.zeros(1, 898, 1796).to(device)
 
         d = 0
 
@@ -88,9 +88,6 @@ def run_attack(
                 labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 attack_label[:, x*449:(x+1)*449, y*449:(y+1)*449] = attack_label_arr[d][0]
                 d += 1
-
-        labels = labels.reshape(1, 898, 1796).to(device)
-        logits = logits.reshape(1, 19, 898, 1796).to(device)
 
         if i == 0:
             num_classes = logits.size(1)
