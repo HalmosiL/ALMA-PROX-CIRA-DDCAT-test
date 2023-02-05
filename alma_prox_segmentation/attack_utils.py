@@ -171,7 +171,7 @@ def run_attack(
             apsrs.extend(((adv_pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         for metric, metric_func in metrics.items():
-            distances[metric].extend(metric_func(adv_image, image).detach().cpu().tolist())
+            distances[metric].extend(metric_func(adv_image_full, image_full).detach().cpu().tolist())
 
     acc_global, accs, ious = confmat_orig.compute()
     adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
