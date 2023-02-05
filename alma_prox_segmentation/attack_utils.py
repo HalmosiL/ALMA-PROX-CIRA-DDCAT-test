@@ -122,6 +122,9 @@ def run_attack(
         for k in range(len(images)):
             image = images[k]
             label = labels[k]
+
+            image, label = image.to(device), label.to(device).squeeze(1).long()
+
             adv_images_arr.append(attack(model=model, inputs=image, labels=attack_label_arr[k], targeted=targeted))
 
         # performance monitoring
