@@ -121,9 +121,9 @@ def run_attack(
             print("Finished: ", k, " in ", len(images))
 
             image = images[k]
-            label = labels[k]
+            label_ = labels[k]
 
-            image, label = image.to(device), label.to(device).squeeze(1).long()
+            image, label_ = image.to(device), label_.to(device).squeeze(1).long()
             adv_images_arr.append(attack(model=model, inputs=image, labels=attack_label_arr[k], targeted=targeted))
 
         # performance monitoring
@@ -134,18 +134,30 @@ def run_attack(
         backwards.append(backward_counter.num_samples_called)
         forward_counter.reset(), backward_counter.reset()
 
+        adv_logits_arr = []
 
+        for k in range(len(adv_images_arr)):
+            if adv_images_arr[k].min() < 0 or adv_images_arr[k].max() > 1:
+                warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
+                adv_images_arr[k].clamp_(min=0, max=1)
 
-        if adv_image.min() < 0 or adv_image.max() > 1:
-            warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
-            adv_image.clamp_(min=0, max=1)
+            if return_adv:
+                adv_images.append(adv_images_arr[k].cpu().clone())
 
-        if return_adv:
-            adv_images.append(adv_image.cpu().clone())
+            adv_logits_arr.append(model(adv_images_arr[k]))
 
-        adv_logits = model(adv_image)
-        adv_pred = adv_logits.argmax(dim=1)
+        adv_pred = adv_pred.reshape(1, 19, 898, 1796).to(device)
+
+        d = 0
+
+        for x in range(2):
+            for y in range(4):
+                adv_pred[:, x*449:(x+1)*449, y*449:(y+1)*449] = adv_logits_arr[d][0]
+                d += 1
+
+        adv_pred = adv_pred.argmax(dim=1)
         confmat_adv.update(label, adv_pred)
+
         if targeted:
             apsrs.extend(((adv_pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
         else:
