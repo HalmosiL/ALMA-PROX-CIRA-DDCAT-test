@@ -109,7 +109,7 @@ def run_attack(
         forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
 
-        print(acc_global, accs, ious)
+        print("ACC:", acc_global[0])
 
 #####################################################################################################################
 
@@ -179,11 +179,10 @@ def run_attack(
         for metric, metric_func in metrics.items():
             distances[metric].extend(metric_func(adv_image_full, image_full).detach().cpu().tolist())
 
-    acc_global, accs, ious = confmat_orig.compute()
-    adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
-
-    print(acc_global)
-    print(adv_acc_global)
+        acc_global, accs, ious = confmat_orig.compute()
+        adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
+    
+        print("ACC:", adv_acc_global[0])
 
 ######################################################################################################################
 
