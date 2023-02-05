@@ -46,6 +46,7 @@ def run_attack(
             break
 
         logits_arr = []
+        labels_arr = []
 
         for k in range(len(images)):
             image = images[k]
@@ -64,20 +65,23 @@ def run_attack(
                 attack_label = label
 
             logits_arr.append(model(image))
+            labels_arr.append(label)
 
             print("Label:", label.shape)
 
         logits = torch.zeros(19, 898, 1796)
-        labels = torch.zeros(19, 898, 1796)
+        labels = torch.zeros(1, 898, 1796)
 
         d = 0
 
         for x in range(2):
             for y in range(4):
                 print(logits_arr[d][0].shape)
+                labels[:, x*449:(x+1)*449, y*449:(y+1)*449] = labels_arr[d][0]
                 logits[:, x*449:(x+1)*449, y*449:(y+1)*449] = logits_arr[d][0]
                 d += 1
 
+        labels = labels.reshape(1, 1, 898, 1796)
         logits = logits.reshape(1, 19, 898, 1796)
 
         if i == 0:
@@ -85,19 +89,19 @@ def run_attack(
             confmat_orig = ConfusionMatrix(num_classes=num_classes)
             confmat_adv = ConfusionMatrix(num_classes=num_classes)
 
-        mask = label < num_classes
+        mask = labels < num_classes
         mask_sum = mask.flatten(1).sum(dim=1)
         pred = logits.argmax(dim=1)
 
-        accuracies.extend(((pred == label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
-        confmat_orig.update(label, pred)
+        accuracies.extend(((pred == labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+        confmat_orig.update(labels, pred)
 
         if targeted:
             target_mask = attack_label < logits.size(1)
             target_sum = target_mask.flatten(1).sum(dim=1)
             apsrs_orig.extend(((pred == attack_label) & target_mask).flatten(1).sum(dim=1).div(target_sum).cpu().tolist())
         else:
-            apsrs_orig.extend(((pred != label) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
+            apsrs_orig.extend(((pred != labels) & mask).flatten(1).sum(dim=1).div(mask_sum).cpu().tolist())
 
         forward_counter.reset(), backward_counter.reset()
         start.record()
