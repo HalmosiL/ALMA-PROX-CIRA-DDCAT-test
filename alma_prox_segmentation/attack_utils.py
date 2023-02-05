@@ -51,6 +51,9 @@ def run_attack(
 
         for k in range(len(images)):
             image = images[k]
+
+            print(image.shape)
+
             label = labels[k]
 
             if return_adv:
