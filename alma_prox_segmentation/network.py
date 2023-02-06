@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-
+import transforms as transform
 import resnet as models
 import numpy as np
 import copy
@@ -145,7 +145,7 @@ class PSPNet(nn.Module):
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
         w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
 
-        x = (x - self.mean) / self.std
+        x = transform.Normalize(mean=mean, std=std)(x)
 
         x = self.layer0(x)
         x = self.layer1(x)
