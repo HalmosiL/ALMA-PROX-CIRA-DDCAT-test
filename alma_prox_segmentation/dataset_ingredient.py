@@ -53,9 +53,8 @@ def get_cityscapes_resized(root, size, split, batch_size=1):
     std = [0.229, 0.224, 0.225]
     std = [item * value_scale for item in std]
 
-    val_transform = transform.Compose([
-        transform.ToTensor(),
-        transform.Normalize(mean=mean, std=std)]
+    val_transform = transform.Compose(
+        [transform.ToTensor()]
     )
 
     image_list_path = root + "/" + split + ".txt"
