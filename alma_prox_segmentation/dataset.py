@@ -59,13 +59,18 @@ class SemData(Dataset):
         return image, label
 
 class SemDataSplit(Dataset):
-    def __init__(self, split='val', data_root=None, data_list=None, transform=None):
+    def __init__(self, split='val', data_root=None, data_list=None, transform=None, num_of_images=None):
         self.split = split
         self.data_list = make_dataset(split, data_root, data_list)
         self.transform = transform
 
+        if(num_of_images is not None):
+            self.len = num_of_images
+        else:
+            self.len = len(self.data_list)
+
     def __len__(self):
-        return len(self.data_list)
+        return self.len
 
     def __getitem__(self, index):
         image_path, label_path = self.data_list[index]
