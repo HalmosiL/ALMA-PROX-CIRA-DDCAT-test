@@ -10,9 +10,6 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from utils import ConfusionMatrix
 
-mean_origin = [0.485, 0.456, 0.406]
-std_origin = [0.229, 0.224, 0.225]
-
 def run_attack(
                 model,
                 loader,
@@ -54,6 +51,8 @@ def run_attack(
 ##############################################-NORMAL-TEST-BLOCK###################################################
 
         for k in range(len(images)):
+            print(images[k])
+
             image = images[k]
             label = labels[k]
 
