@@ -137,18 +137,12 @@ def run_attack(
         adv_logits_arr = []
 
         for k in range(len(adv_images_arr)):
+            if adv_images_arr[k].min() < 0 or adv_images_arr[k].max() > 1:
+                warnings.warn('Values of produced adversarials are not in the [0, 1] range -> Clipping to [0, 1].')
+                adv_images_arr[k].clamp_(min=0, max=1)
+
             if return_adv:
                 adv_images.append(adv_images_arr[k].cpu().clone())
-
-            adv_images_arr[k][:, 0, :, :] = adv_images_arr[k][:, 0, :, :] * std_origin[0] + mean_origin[0]
-            adv_images_arr[k][:, 1, :, :] = adv_images_arr[k][:, 1, :, :] * std_origin[1] + mean_origin[1]
-            adv_images_arr[k][:, 2, :, :] = adv_images_arr[k][:, 2, :, :] * std_origin[2] + mean_origin[2]
-
-            adv_images_arr[k] = torch.clamp(adv_images_arr[k], min=0.0, max=1.0)
-
-            adv_images_arr[k][:, 0, :, :] = (adv_images_arr[k][:, 0, :, :] - mean_origin[0]) / std_origin[0]
-            adv_images_arr[k][:, 1, :, :] = (adv_images_arr[k][:, 1, :, :] - mean_origin[1]) / std_origin[1]
-            adv_images_arr[k][:, 2, :, :] = (adv_images_arr[k][:, 2, :, :] - mean_origin[2]) / std_origin[2]
 
             adv_logits_arr.append(model(adv_images_arr[k]))
 
