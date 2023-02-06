@@ -56,6 +56,7 @@ class Normalize(object):
         else:
             for t, m, s in zip(image, self.mean, self.std):
                 t.sub_(m).div_(s)
+            
         return image, label
 
 
