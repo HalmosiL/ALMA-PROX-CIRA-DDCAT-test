@@ -59,7 +59,7 @@ def get_cityscapes_resized(root="", size=None, split="", num_images=None, batch_
             data_root=root,
             data_list=image_list_path,
             transform=val_transform,
-            num_of_images=num_of_images
+            num_of_images=num_images
         ),
         batch_size=1,
         num_workers=1,
