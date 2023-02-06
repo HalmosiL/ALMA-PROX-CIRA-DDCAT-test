@@ -104,9 +104,6 @@ def run_attack(
 
         forward_counter.reset(), backward_counter.reset()
         acc_global, accs, ious = confmat_orig.compute()
-
-        print("\nACC:", acc_global.item())
-
 #####################################################################################################################
 
         start.record()
@@ -114,8 +111,6 @@ def run_attack(
         adv_images_arr = []
 
         for k in range(len(images)):
-            print("Finished: ", k, " in ", len(images))
-
             image = images[k]
             label_ = labels[k]
 
@@ -171,11 +166,6 @@ def run_attack(
 
         acc_global, accs, ious = confmat_orig.compute()
         adv_acc_global, adv_accs, adv_ious = confmat_adv.compute()
-    
-        print("ACC_list:", accs)
-        print("ADV_ACC_list:", adv_accs)
-
-        print("ADV_ACC:", adv_acc_global.item())
 
 ######################################################################################################################
 
