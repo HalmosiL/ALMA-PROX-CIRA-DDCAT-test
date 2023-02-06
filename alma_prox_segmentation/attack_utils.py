@@ -44,10 +44,6 @@ def run_attack(
         labels_arr = []
         attack_label_arr = []
 
-        if(i == 1):
-            break
-
-
 ##############################################-NORMAL-TEST-BLOCK###################################################
         for k in range(len(images)):
             image = images[k]
