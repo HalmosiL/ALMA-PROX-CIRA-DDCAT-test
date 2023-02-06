@@ -51,8 +51,6 @@ def run_attack(
 ##############################################-NORMAL-TEST-BLOCK###################################################
 
         for k in range(len(images)):
-            print(images[k])
-
             image = images[k]
             label = labels[k]
 
