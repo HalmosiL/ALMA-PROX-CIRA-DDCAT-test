@@ -46,9 +46,7 @@ def get_cityscapes(root: str, size: int, split: str,
 
 
 @dataset_ingredient.capture
-def get_cityscapes_resized(root, size, split, num_images, batch_size=1):
-    print(num_images)
-
+def get_cityscapes_resized(root="", size=None, split="", num_images=None, batch_size=1):
     val_transform = transform.Compose(
         [transform.ToTensor(),]
     )
@@ -60,7 +58,8 @@ def get_cityscapes_resized(root, size, split, num_images, batch_size=1):
             split=split,
             data_root=root,
             data_list=image_list_path,
-            transform=val_transform
+            transform=val_transform,
+            num_of_images=num_of_images
         ),
         batch_size=1,
         num_workers=1,
