@@ -96,8 +96,8 @@ class PSPNet(nn.Module):
         self.criterion = criterion
         models.BatchNorm = BatchNorm
 
-        self.mean = [0.485, 0.456, 0.406]
-        self.std = [0.229, 0.224, 0.225]
+        self.mean = torch.tensor([0.485, 0.456, 0.406])
+        self.std = torch.tensor([0.229, 0.224, 0.225])
 
         if layers == 50:
             resnet = models.resnet50(pretrained=pretrained)
@@ -154,6 +154,7 @@ class PSPNet(nn.Module):
         x = self.layer2(x)
         x_tmp = self.layer3(x)
         x = self.layer4(x_tmp)
+
         if self.use_ppm:
             x = self.ppm(x)
         x = self.cls(x)
