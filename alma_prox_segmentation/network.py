@@ -96,6 +96,9 @@ class PSPNet(nn.Module):
         self.criterion = criterion
         models.BatchNorm = BatchNorm
 
+        self.mean = [0.485, 0.456, 0.406]
+        self.std = [0.229, 0.224, 0.225]
+
         if layers == 50:
             resnet = models.resnet50(pretrained=pretrained)
         elif layers == 101:
@@ -141,6 +144,8 @@ class PSPNet(nn.Module):
         assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
         w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
+
+        print(x.shape)
 
         x = self.layer0(x)
         x = self.layer1(x)

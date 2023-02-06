@@ -47,12 +47,6 @@ def get_cityscapes(root: str, size: int, split: str,
 
 @dataset_ingredient.capture
 def get_cityscapes_resized(root, size, split, batch_size=1):
-    value_scale = 255
-    mean = [0.485, 0.456, 0.406]
-    mean = [item * value_scale for item in mean]
-    std = [0.229, 0.224, 0.225]
-    std = [item * value_scale for item in std]
-
     val_transform = transform.Compose(
         [transform.ToTensor()]
     )
