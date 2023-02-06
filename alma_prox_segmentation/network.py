@@ -145,9 +145,7 @@ class PSPNet(nn.Module):
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
         w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
 
-        x[:, 0, :, :] = (x[:, 0, :, :] - self.mean[0]) / self.std[0]
-        x[:, 1, :, :] = (x[:, 1, :, :] - self.mean[1]) / self.std[1]
-        x[:, 2, :, :] = (x[:, 2, :, :] - self.mean[2]) / self.std[2]
+        x = (x - self.mean) / self.std
 
         x = self.layer0(x)
         x = self.layer1(x)
