@@ -87,7 +87,7 @@ class SemDataSplit(Dataset):
 
         for x in range(2):
             for y in range(4):
-                images.append(image[:, x*449:(x+1)*449, y*449:(y+1)*449])
+                images.append(image[:, x*449:(x+1)*449, y*449:(y+1)*449] / 255)
 
         for x in range(2):
             for y in range(4):
